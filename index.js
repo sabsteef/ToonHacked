@@ -149,19 +149,19 @@ Thermostat.prototype = {
 		}
 	},
 	getCurrentTemperature: function(callback) {
-		this.log("getCurrentTemperature from:", this.apiroute+"/status");
+		this.log("getCurrentTemperature from:", this.apiroute+"//happ_thermstat");
 		request.get({
-			url: this.apiroute+"/status",
+			url: this.apiroute+"/happ_thermstat",
 			auth : this.auth
 		}, function(err, response, body) {
 			if (!err && response.statusCode == 200) {
 				this.log("response success");
 				var json = JSON.parse(body); //{targetHeatingCoolingState":3,"currentHeatingCoolingState":0,"temperature":"18.10","humidity":"34.10"}
 
-				if (json.currentTemperature != undefined)
+				if (json.currentTemp != undefined)
                                 {
-                                  this.log("CurrentTemperature %s", json.currentTemperature);
-                                  this.currentTemperature = parseFloat(json.currentTemperature);
+                                  this.log("CurrentTemperature %s", json.currentTemp);
+                                  this.currentTemperature = parseFloat(json.currentTemp);
                                 }
                                 else
                                 {
