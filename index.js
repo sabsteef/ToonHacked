@@ -1,26 +1,16 @@
 /*
-{
-    "bridge": {
-    	...
-    },
-
-    "description": "...",
 
     "accessories": [
         {
             "accessory": "Thermostat",
-            "name": "Toon Thermostat",
-            "apiroute": "http://10.3.0.52",
+            "name": "Toon Thermostaat",
+            "apiroute": "http://yourToonIp",
             //optional
             "maxTemp": "26",
             "minTemp": "15",
-            "username": "user",
-            "password": "pass"
-        }
-    ],
 
-    "platforms":[]
-}
+        }
+
 
 */
 
@@ -38,7 +28,7 @@ module.exports = function(homebridge){
 
 function Thermostat(log, config) {
 	this.log = log;
-	this.maxTemp = config.maxTemp || 30;
+	this.maxTemp = config.maxTemp || 26;
 	this.minTemp = config.minTemp || 15;
 	this.name = config.name;
 	this.apiroute = config.apiroute || "apiroute";
