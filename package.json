@@ -5,7 +5,7 @@
   "license": "ISC",
   "main": "index.js",
   "keywords": [
-    "homebridge-plugin", "toon"
+    "homebridge-plugin"
   ],
   "repository": {
     "type": "git",
