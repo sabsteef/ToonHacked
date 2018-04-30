@@ -1,218 +1,29 @@
-var http = require('http');
-var Accessory, Service, Characteristic, UUIDGen;
+/*{    "bridge": {     ...    },
+    "description": "...",
+    "accessories": [        {            "accessory": "Thermostat",            "name": "Thermostat Demo",            "apiroute": "http://myurl.com",            //optional            "maxTemp": "26",            "minTemp": "15",            "username": "user",            "password": "pass"        }    ],
+    "platforms":[]}
+*/
 
-module.exports = function(homebridge) {
-  console.log("homebridge API version: " + homebridge.version);
-
-  // Accessory must be created from PlatformAccessory Constructor
-  Accessory = homebridge.platformAccessory;
-
-  // Service and Characteristic are from hap-nodejs
-  Service = homebridge.hap.Service;
-  Characteristic = homebridge.hap.Characteristic;
-  UUIDGen = homebridge.hap.uuid;
-  
-  // For platform plugin to be considered as dynamic platform plugin,
-  // registerPlatform(pluginName, platformName, constructor, dynamic), dynamic must be true
-  homebridge.registerPlatform("homebridge-samplePlatform", "SamplePlatform", SamplePlatform, true);
+var Service, Characteristic;var request = require("request");
+module.exports = function(homebridge){  Service = homebridge.hap.Service;  Characteristic = homebridge.hap.Characteristic;  homebridge.registerAccessory("homebridge-thermostat", "Thermostat", Thermostat);};
+function Thermostat(log, config) { this.log = log; this.maxTemp = config.maxTemp || 25; this.minTemp = config.minTemp || 15; this.name = config.name; this.apiroute = config.apiroute || "apiroute"; this.log(this.name, this.apiroute); this.username = config.username || null; this.password = config.password || null;  if(this.username != null && this.password != null){  this.auth = {   user : this.username,   pass : this.password  }; }
+ //Characteristic.TemperatureDisplayUnits.CELSIUS = 0; //Characteristic.TemperatureDisplayUnits.FAHRENHEIT = 1; this.temperatureDisplayUnits = Characteristic.TemperatureDisplayUnits.CELSIUS; this.currentTemperature = 19; this.currentRelativeHumidity = 0.70; // The value property of CurrentHeatingCoolingState must be one of the following: //Characteristic.CurrentHeatingCoolingState.OFF = 0; //Characteristic.CurrentHeatingCoolingState.HEAT = 1; //Characteristic.CurrentHeatingCoolingState.COOL = 2; this.heatingCoolingState = Characteristic.CurrentHeatingCoolingState.AUTO; this.targetTemperature = 21; this.targetRelativeHumidity = 0.5; this.heatingThresholdTemperature = 25; this.coolingThresholdTemperature = 5; // The value property of TargetHeatingCoolingState must be one of the following: //Characteristic.TargetHeatingCoolingState.OFF = 0; //Characteristic.TargetHeatingCoolingState.HEAT = 1; //Characteristic.TargetHeatingCoolingState.COOL = 2; //Characteristic.TargetHeatingCoolingState.AUTO = 3; this.targetHeatingCoolingState = Characteristic.TargetHeatingCoolingState.AUTO;
+ this.service = new Service.Thermostat(this.name);
 }
-
-// Platform constructor
-// config may be null
-// api may be null if launched from old homebridge version
-function SamplePlatform(log, config, api) {
-  log("SamplePlatform Init");
-  var platform = this;
-  this.log = log;
-  this.config = config;
-  this.accessories = [];
-
-  this.requestServer = http.createServer(function(request, response) {
-    if (request.url === "/add") {
-      this.addAccessory(new Date().toISOString());
-      response.writeHead(204);
-      response.end();
-    }
-
-    if (request.url == "/reachability") {
-      this.updateAccessoriesReachability();
-      response.writeHead(204);
-      response.end();
-    }
-
-    if (request.url == "/remove") {
-      this.removeAccessory();
-      response.writeHead(204);
-      response.end();
-    }
-  }.bind(this));
-
-  this.requestServer.listen(18081, function() {
-    platform.log("Server Listening...");
-  });
-
-  if (api) {
-      // Save the API object as plugin needs to register new accessory via this object
-      this.api = api;
-
-      // Listen to event "didFinishLaunching", this means homebridge already finished loading cached accessories.
-      // Platform Plugin should only register new accessory that doesn't exist in homebridge after this event.
-      // Or start discover new accessories.
-      this.api.on('didFinishLaunching', function() {
-        platform.log("DidFinishLaunching");
-      }.bind(this));
-  }
-}
-
-// Function invoked when homebridge tries to restore cached accessory.
-// Developer can configure accessory at here (like setup event handler).
-// Update current value.
-SamplePlatform.prototype.configureAccessory = function(accessory) {
-  this.log(accessory.displayName, "Configure Accessory");
-  var platform = this;
-
-  // Set the accessory to reachable if plugin can currently process the accessory,
-  // otherwise set to false and update the reachability later by invoking 
-  // accessory.updateReachability()
-  accessory.reachable = true;
-
-  accessory.on('identify', function(paired, callback) {
-    platform.log(accessory.displayName, "Identify!!!");
-    callback();
-  });
-
-  if (accessory.getService(Service.Lightbulb)) {
-    accessory.getService(Service.Lightbulb)
-    .getCharacteristic(Characteristic.On)
-    .on('set', function(value, callback) {
-      platform.log(accessory.displayName, "Light -> " + value);
-      callback();
-    });
-  }
-
-  this.accessories.push(accessory);
-}
-
-// Handler will be invoked when user try to config your plugin.
-// Callback can be cached and invoke when necessary.
-SamplePlatform.prototype.configurationRequestHandler = function(context, request, callback) {
-  this.log("Context: ", JSON.stringify(context));
-  this.log("Request: ", JSON.stringify(request));
-
-  // Check the request response
-  if (request && request.response && request.response.inputs && request.response.inputs.name) {
-    this.addAccessory(request.response.inputs.name);
-
-    // Invoke callback with config will let homebridge save the new config into config.json
-    // Callback = function(response, type, replace, config)
-    // set "type" to platform if the plugin is trying to modify platforms section
-    // set "replace" to true will let homebridge replace existing config in config.json
-    // "config" is the data platform trying to save
-    callback(null, "platform", true, {"platform":"SamplePlatform", "otherConfig":"SomeData"});
-    return;
-  }
-
-  // - UI Type: Input
-  // Can be used to request input from user
-  // User response can be retrieved from request.response.inputs next time
-  // when configurationRequestHandler being invoked
-
-  var respDict = {
-    "type": "Interface",
-    "interface": "input",
-    "title": "Add Accessory",
-    "items": [
-      {
-        "id": "name",
-        "title": "Name",
-        "placeholder": "Fancy Light"
-      }//, 
-      // {
-      //   "id": "pw",
-      //   "title": "Password",
-      //   "secure": true
-      // }
-    ]
-  }
-
-  // - UI Type: List
-  // Can be used to ask user to select something from the list
-  // User response can be retrieved from request.response.selections next time
-  // when configurationRequestHandler being invoked
-
-  // var respDict = {
-  //   "type": "Interface",
-  //   "interface": "list",
-  //   "title": "Select Something",
-  //   "allowMultipleSelection": true,
-  //   "items": [
-  //     "A","B","C"
-  //   ]
-  // }
-
-  // - UI Type: Instruction
-  // Can be used to ask user to do something (other than text input)
-  // Hero image is base64 encoded image data. Not really sure the maximum length HomeKit allows.
-
-  // var respDict = {
-  //   "type": "Interface",
-  //   "interface": "instruction",
-  //   "title": "Almost There",
-  //   "detail": "Please press the button on the bridge to finish the setup.",
-  //   "heroImage": "base64 image data",
-  //   "showActivityIndicator": true,
-  // "showNextButton": true,
-  // "buttonText": "Login in browser",
-  // "actionURL": "https://google.com"
-  // }
-
-  // Plugin can set context to allow it track setup process
-  context.ts = "Hello";
-
-  // Invoke callback to update setup UI
-  callback(respDict);
-}
-
-// Sample function to show how developer can add accessory dynamically from outside event
-SamplePlatform.prototype.addAccessory = function(accessoryName) {
-  this.log("Add Accessory");
-  var platform = this;
-  var uuid;
-
-  uuid = UUIDGen.generate(accessoryName);
-
-  var newAccessory = new Accessory(accessoryName, uuid);
-  newAccessory.on('identify', function(paired, callback) {
-    platform.log(accessory.displayName, "Identify!!!");
-    callback();
-  });
-  // Plugin can save context on accessory to help restore accessory in configureAccessory()
-  // newAccessory.context.something = "Something"
-  
-  // Make sure you provided a name for service, otherwise it may not visible in some HomeKit apps
-  newAccessory.addService(Service.Lightbulb, "Test Light")
-  .getCharacteristic(Characteristic.On)
-  .on('set', function(value, callback) {
-    platform.log(accessory.displayName, "Light -> " + value);
-    callback();
-  });
-
-  this.accessories.push(newAccessory);
-  this.api.registerPlatformAccessories("homebridge-samplePlatform", "SamplePlatform", [newAccessory]);
-}
-
-SamplePlatform.prototype.updateAccessoriesReachability = function() {
-  this.log("Update Reachability");
-  for (var index in this.accessories) {
-    var accessory = this.accessories[index];
-    accessory.updateReachability(false);
-  }
-}
-
-// Sample function to show how developer can remove accessory dynamically from outside event
-SamplePlatform.prototype.removeAccessory = function() {
-  this.log("Remove Accessory");
-  this.api.unregisterPlatformAccessories("homebridge-samplePlatform", "SamplePlatform", this.accessories);
-
-  this.accessories = [];
-}
+Thermostat.prototype = { //Start identify: function(callback) {  this.log("Identify requested!");  callback(null); }, // Required getCurrentHeatingCoolingState: function(callback) {  this.log("getCurrentHeatingCoolingState from:", this.apiroute+"/status");  request.get({   url: this.apiroute+"/status",   auth : this.auth  }, function(err, response, body) {   if (!err && response.statusCode == 200) {    this.log("response success");    var json = JSON.parse(body); //{targetHeatingCoolingState":3,"currentHeatingCoolingState":0,"targetTemperature":10,"temperature":12,"humidity":98}    this.log("currentHeatingCoolingState is %s", json.currentHeatingCoolingState);    this.currentHeatingCoolingState = json.currentHeatingCoolingState;    this.service.setCharacteristic(Characteristic.CurrentHeatingCoolingState, this.currentHeatingCoolingState);        callback(null, this.currentHeatingCoolingState); // success   } else {    this.log("Error getting CurrentHeatingCoolingState: %s", err);    callback(err);   }  }.bind(this)); }, getTargetHeatingCoolingState: function(callback) {  this.log("getTargetHeatingCoolingState from:", this.apiroute+"/status");  request.get({   url: this.apiroute+"/status",   auth : this.auth  }, function(err, response, body) {   if (!err && response.statusCode == 200) {    this.log("response success");    var json = JSON.parse(body); //{"targetHeatingCoolingState":3,"currentHeatingCoolingState":0,"targetTemperature":10,"temperature":12,"humidity":98}    this.log("TargetHeatingCoolingState received is %s", json.targetHeatingCoolingState, json.targetStateCode);    this.targetHeatingCoolingState = json.targetHeatingCoolingState !== undefined? json.targetHeatingCoolingState : json.targetStateCode;    this.log("TargetHeatingCoolingState is now %s", this.targetHeatingCoolingState);    //this.service.setCharacteristic(Characteristic.TargetHeatingCoolingState, this.targetHeatingCoolingState);        callback(null, this.targetHeatingCoolingState); // success   } else {    this.log("Error getting TargetHeatingCoolingState: %s", err);    callback(err);   }  }.bind(this)); }, setTargetHeatingCoolingState: function(value, callback) {  if(value === undefined) {   callback(); //Some stuff call this without value doing shit with the rest  } else {   this.log("setTargetHeatingCoolingState from/to:", this.targetHeatingCoolingState, value);      request.get({    url: this.apiroute + '/targetHeatingCoolingState/' + value,    auth : this.auth   }, function(err, response, body) {    if (!err && response.statusCode == 200) {     this.log("response success");     //this.service.setCharacteristic(Characteristic.TargetHeatingCoolingState, value);     this.targetHeatingCoolingState = value;     callback(null); // success    } else {     this.log("Error getting state: %s", err);     callback(err);    }   }.bind(this));  } }, getCurrentTemperature: function(callback) {  this.log("getCurrentTemperature from:", this.apiroute+"/status");  request.get({   url: this.apiroute+"/status",   auth : this.auth  }, function(err, response, body) {   if (!err && response.statusCode == 200) {    this.log("response success");    var json = JSON.parse(body); //{targetHeatingCoolingState":3,"currentHeatingCoolingState":0,"temperature":"18.10","humidity":"34.10"}
+    if (json.currentTemperature != undefined)                                {                                  this.log("CurrentTemperature %s", json.currentTemperature);                                  this.currentTemperature = parseFloat(json.currentTemperature);                                }                                else                                {                                  this.log("Temperature %s", json.temperature);                                  this.currentTemperature = parseFloat(json.temperature);                                }            callback(null, this.currentTemperature); // success   } else {    this.log("Error getting state: %s", err);    callback(err);   }  }.bind(this)); }, getTargetTemperature: function(callback) {  this.log("getTargetTemperature from:", this.apiroute+"/status");  request.get({   url: this.apiroute+"/status",   auth : this.auth  }, function(err, response, body) {   if (!err && response.statusCode == 200) {    this.log("response success");    var json = JSON.parse(body); //{targetHeatingCoolingState":3,"currentHeatingCoolingState":0"temperature":"18.10","humidity":"34.10"}    this.targetTemperature = parseFloat(json.targetTemperature);    this.log("Target temperature is %s", this.targetTemperature);    callback(null, this.targetTemperature); // success   } else {    this.log("Error getting state: %s", err);    callback(err);   }  }.bind(this)); }, setTargetTemperature: function(value, callback) {  this.log("setTargetTemperature from:", this.apiroute+"/targetTemperature/"+value);  request.get({   url: this.apiroute+"/targetTemperature/"+value,   auth : this.auth  }, function(err, response, body) {   if (!err && response.statusCode == 200) {    this.log("response success");    callback(null); // success   } else {    this.log("Error getting state: %s", err);    callback(err);   }  }.bind(this)); }, getTemperatureDisplayUnits: function(callback) {  this.log("getTemperatureDisplayUnits:", this.temperatureDisplayUnits);  var error = null;  callback(error, this.temperatureDisplayUnits); }, setTemperatureDisplayUnits: function(value, callback) {  this.log("setTemperatureDisplayUnits from %s to %s", this.temperatureDisplayUnits, value);  this.temperatureDisplayUnits = value;  var error = null;  callback(error); },
+ // Optional getCurrentRelativeHumidity: function(callback) {  this.log("getCurrentRelativeHumidity from:", this.apiroute+"/status");  request.get({   url: this.apiroute+"/status",   auth : this.auth  }, function(err, response, body) {   if (!err && response.statusCode == 200) {    this.log("response success");    var json = JSON.parse(body); //{"state":"OFF","targetStateCode":5,"temperature":"18.10","humidity":"34.10"}        if (json.currentRelativeHumidity != undefined)                                {                                  this.log("Humidity state is %s", json.currentRelativeHumidity);                                  this.currentRelativeHumidity = parseFloat(json.currentRelativeHumidity);                                }                                else                                {                                  this.log("Humidity %s", json.humidity);                                  this.currentRelativeHumidity = parseFloat(json.humidity);                                }
+    callback(null, this.currentRelativeHumidity); // success   } else {    this.log("Error getting state: %s", err);    callback(err);   }  }.bind(this)); }, getTargetRelativeHumidity: function(callback) {  this.log("getTargetRelativeHumidity:", this.targetRelativeHumidity);  var error = null;  callback(error, this.targetRelativeHumidity); }, setTargetRelativeHumidity: function(value, callback) {  this.log("setTargetRelativeHumidity from/to :", this.targetRelativeHumidity, value);  this.log("setTargetRelativeHumidity not implemented with API");  this.targetRelativeHumidity = value;  var error = null;  callback(error); },/* getCoolingThresholdTemperature: function(callback) {  this.log("getCoolingThresholdTemperature: ", this.coolingThresholdTemperature);  var error = null;  callback(error, this.coolingThresholdTemperature); },*/ getHeatingThresholdTemperature: function(callback) {  this.log("getHeatingThresholdTemperature :" , this.heatingThresholdTemperature);  var error = null;  callback(error, this.heatingThresholdTemperature); }, getName: function(callback) {  this.log("getName :", this.name);  var error = null;  callback(error, this.name); },
+ getServices: function() {
+  // you can OPTIONALLY create an information service if you wish to override  // the default values for things like serial number, model, etc.  var informationService = new Service.AccessoryInformation();
+  informationService   .setCharacteristic(Characteristic.Manufacturer, "HTTP Manufacturer")   .setCharacteristic(Characteristic.Model, "HTTP Model")   .setCharacteristic(Characteristic.SerialNumber, "HTTP Serial Number");
+  
+  // Required Characteristics  this.service   .getCharacteristic(Characteristic.CurrentHeatingCoolingState)   .on('get', this.getCurrentHeatingCoolingState.bind(this));
+  this.service   .getCharacteristic(Characteristic.TargetHeatingCoolingState)   .on('get', this.getTargetHeatingCoolingState.bind(this))   .on('set', this.setTargetHeatingCoolingState.bind(this));
+  this.service   .getCharacteristic(Characteristic.CurrentTemperature)   .on('get', this.getCurrentTemperature.bind(this));
+  this.service   .getCharacteristic(Characteristic.TargetTemperature)   .on('get', this.getTargetTemperature.bind(this))   .on('set', this.setTargetTemperature.bind(this));
+  this.service   .getCharacteristic(Characteristic.TemperatureDisplayUnits)   .on('get', this.getTemperatureDisplayUnits.bind(this))   .on('set', this.setTemperatureDisplayUnits.bind(this));
+  // Optional Characteristics  this.service   .getCharacteristic(Characteristic.CurrentRelativeHumidity)   .on('get', this.getCurrentRelativeHumidity.bind(this));
+  this.service   .getCharacteristic(Characteristic.TargetRelativeHumidity)   .on('get', this.getTargetRelativeHumidity.bind(this))   .on('set', this.setTargetRelativeHumidity.bind(this));  /*  this.service   .getCharacteristic(Characteristic.CoolingThresholdTemperature)   .on('get', this.getCoolingThresholdTemperature.bind(this));  */
+  this.service   .getCharacteristic(Characteristic.HeatingThresholdTemperature)   .on('get', this.getHeatingThresholdTemperature.bind(this));
+  this.service   .getCharacteristic(Characteristic.Name)   .on('get', this.getName.bind(this));  this.service.getCharacteristic(Characteristic.CurrentTemperature)   .setProps({    minValue: this.minTemp,    maxValue: this.maxTemp,    minStep: 1   });  this.service.getCharacteristic(Characteristic.TargetTemperature)   .setProps({    minValue: this.minTemp,    maxValue: this.maxTemp,    minStep: 1   });  this.log(this.minTemp);  return [informationService, this.service]; }};
