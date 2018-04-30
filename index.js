@@ -165,7 +165,11 @@ Thermostat.prototype = {
 				if (json.currentTemp != undefined)
                                 {
                                   this.log("CurrentTemperature %s", json.currentTemp);
-                                  this.currentTemperature = parseFloat(json.currentTemp);
+					var a = parseFloat(json.currentTemp);
+					var b = ".";
+					var position = 3;
+					var output = [a.slice(0, position), b, a.slice(position)].join('');
+                                  this.currentTemperature = output;
                                 }
                                 else
                                 {
