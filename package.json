@@ -1,12 +1,12 @@
 {
   "name": "homebridge-toonhacked",
-  "version": "0.0.2",
-  "description": "Using the rooted Toon with HomeBridge",
+  "version": "0.8.0",
+  "description": "Using your rooted Toon with HomeBridge",
   "author": "Stefan Ringelberg",
   "license": "ISC",
   "main": "index.js",
   "keywords": [
-    "homebridge-plugin"
+    "homebridge-plugin", "toon" ,"rooted", "hacked"
   ],
   "dependencies": {
     "request": "^2.65.0"
