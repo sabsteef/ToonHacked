@@ -38,8 +38,8 @@ module.exports = function(homebridge){
 
 function Thermostat(log, config) {
 	this.log = log;
-	this.maxTemp = config.maxTemp || 2500;
-	this.minTemp = config.minTemp || 1500;
+	this.maxTemp = config.maxTemp || 30;
+	this.minTemp = config.minTemp || 15;
 	this.name = config.name;
 	this.apiroute = config.apiroute || "apiroute";
 	this.log(this.name, this.apiroute);
@@ -189,7 +189,8 @@ Thermostat.prototype = {
 			if (!err && response.statusCode == 200) {
 				this.log("response success");
 				var json = JSON.parse(body); //{targetHeatingCoolingState":3,"currentHeatingCoolingState":0"temperature":"18.10","humidity":"34.10"}
-				this.targetTemperature = parseFloat(json.currentSetpoint);
+				var output = (parseFloat(json.currentTemp) / 100).toFixed(2);
+				this.targetTemperature = output;
 				this.log("Target temperature is %s", this.targetTemperature);
 				callback(null, this.targetTemperature); // success
 			} else {
