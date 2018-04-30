@@ -38,8 +38,8 @@ module.exports = function(homebridge){
 
 function Thermostat(log, config) {
 	this.log = log;
-	this.maxTemp = config.maxTemp || 25;
-	this.minTemp = config.minTemp || 15;
+	this.maxTemp = config.maxTemp || 2500;
+	this.minTemp = config.minTemp || 1500;
 	this.name = config.name;
 	this.apiroute = config.apiroute || "apiroute";
 	this.log(this.name, this.apiroute);
@@ -162,14 +162,10 @@ Thermostat.prototype = {
 				if (json.currentTemp != undefined)
                                 {
                                   this.log("CurrentTemperature %s", json.currentTemp);
-					var a = parseFloat(json.currentTemp).toString();
-					var b = ".";
-					var position = 3;
-					var output = [a.slice(0, position), b, a.slice(position)].join('');
+				  var output = (parseFloat(json.currentTemp) / 100).toFixed(2);
                                   this.currentTemperature = output;
-				this.log("ACurrentTemperature %s", output);
-					var c = (parseFloat(json.currentTemp) / 100).toFixed(2);
-				this.log("BCurrentTemperature %s", c);	
+				this.log("CurrentTemperature %s", output);
+
                                 }
                                 else
                                 {
@@ -185,15 +181,15 @@ Thermostat.prototype = {
 		}.bind(this));
 	},
 	getTargetTemperature: function(callback) {
-		this.log("getTargetTemperature from:", this.apiroute+"/status");
+		this.log("getTargetTemperature from:", this.apiroute+"/happ_thermstat?action=getThermostatInfo");
 		request.get({
-			url: this.apiroute+"/status",
+			url: this.apiroute+"/happ_thermstat?action=getThermostatInfo",
 			auth : this.auth
 		}, function(err, response, body) {
 			if (!err && response.statusCode == 200) {
 				this.log("response success");
 				var json = JSON.parse(body); //{targetHeatingCoolingState":3,"currentHeatingCoolingState":0"temperature":"18.10","humidity":"34.10"}
-				this.targetTemperature = parseFloat(json.targetTemperature);
+				this.targetTemperature = parseFloat(json.currentSetpoint);
 				this.log("Target temperature is %s", this.targetTemperature);
 				callback(null, this.targetTemperature); // success
 			} else {
