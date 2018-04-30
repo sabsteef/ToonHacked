@@ -165,7 +165,7 @@ Thermostat.prototype = {
 				if (json.currentTemp != undefined)
                                 {
                                   this.log("CurrentTemperature %s", json.currentTemp);
-					var a = parseFloat(json.currentTemp);
+					var a = parseFloat(json.currentTemp).toString();
 					var b = ".";
 					var position = 3;
 					var output = [a.slice(0, position), b, a.slice(position)].join('');
@@ -293,9 +293,9 @@ Thermostat.prototype = {
 		var informationService = new Service.AccessoryInformation();
 
 		informationService
-			.setCharacteristic(Characteristic.Manufacturer, "HTTP Manufacturer")
-			.setCharacteristic(Characteristic.Model, "HTTP Model")
-			.setCharacteristic(Characteristic.SerialNumber, "HTTP Serial Number");
+			.setCharacteristic(Characteristic.Manufacturer, "Eneco")
+			.setCharacteristic(Characteristic.Model, "Toon")
+			.setCharacteristic(Characteristic.SerialNumber, "not saying ;-)");
 
 		
 
