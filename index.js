@@ -155,9 +155,6 @@ Thermostat.prototype = {
 			auth : this.auth
 		}, 	    
 			function(err, response, body) {
-			this.log("error ", err);
-			this.log("Response ",response);
-			this.log("Body", body);
 			if (!err && response.statusCode == 200) {
 				this.log("response success");
 				var json = JSON.parse(body); //{targetHeatingCoolingState":3,"currentHeatingCoolingState":0,"temperature":"18.10","humidity":"34.10"}
@@ -170,6 +167,9 @@ Thermostat.prototype = {
 					var position = 3;
 					var output = [a.slice(0, position), b, a.slice(position)].join('');
                                   this.currentTemperature = output;
+				this.log("ACurrentTemperature %s", output);
+					var c = (parseFloat(json.currentTemp) / 100).toFixed(2)
+				this.log("BCurrentTemperature %s", c);	
                                 }
                                 else
                                 {
@@ -285,6 +285,9 @@ Thermostat.prototype = {
 		var error = null;
 		callback(error, this.name);
 	},
+	insertDecimal: function(num) {
+        return (num / 100).toFixed(2);
+	}
 
 	getServices: function() {
 
