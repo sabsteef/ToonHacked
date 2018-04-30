@@ -1,4 +1,3 @@
-
 /*
 {
     "bridge": {
@@ -10,13 +9,13 @@
     "accessories": [
         {
             "accessory": "Thermostat",
-            "name": "Toon Thermostat",
-            "apiroute": "http://10.3.0.52",
+            "name": "Thermostat Demo",
+            "apiroute": "http://myurl.com",
             //optional
             "maxTemp": "26",
             "minTemp": "15",
-            "username": "user", //Not needed yet
-            "password": "pass"  // not needed yet
+            "username": "user",
+            "password": "pass"
         }
     ],
 
@@ -33,7 +32,7 @@ var request = require("request");
 module.exports = function(homebridge){
   Service = homebridge.hap.Service;
   Characteristic = homebridge.hap.Characteristic;
-  homebridge.registerAccessory("homebridge-toonhacked", "Thermostat", Thermostat);
+  homebridge.registerAccessory("homebridge-thermostat", "Thermostat", Thermostat);
 };
 
 
