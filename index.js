@@ -149,9 +149,9 @@ Thermostat.prototype = {
 		}
 	},
 	getCurrentTemperature: function(callback) {
-		this.log("getCurrentTemperature from:", this.apiroute+"//happ_thermstat");
+		this.log("getCurrentTemperature from:", this.apiroute+"/happ_thermstat?action=getThermostatInfo");
 		request.get({
-			url: this.apiroute+"/happ_thermstat",
+			url: this.apiroute+"/happ_thermstat?action=getThermostatInfo",
 			auth : this.auth
 		}, function(err, response, body) {
 			if (!err && response.statusCode == 200) {
