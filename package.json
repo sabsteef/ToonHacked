@@ -1,17 +1,17 @@
 {
-  "name": "homebridge-samplePlatform",
+  "name": "homebridge-ToonHacked",
   "version": "0.0.1",
-  "description": "Sample Platform plugin for homebridge: https://github.com/nfarina/homebridge",
+  "description": "Using the rooted Toon with HomeBridge",
   "license": "ISC",
   "keywords": [
     "homebridge-plugin"
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/example/homebridge.git"
+    "url": "git://github.com/sabsteef/ToonHacked.git"
   },
   "bugs": {
-    "url": "http://github.com/example/homebridge/issues"
+    "url": "http://github.com/sabsteef/ToonHacked/issues"
   },
   "engines": {
     "node": ">=0.12.0",
