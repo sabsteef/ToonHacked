@@ -287,7 +287,7 @@ Thermostat.prototype = {
 	},
 	insertDecimal: function(num) {
         return (num / 100).toFixed(2);
-	}
+	},
 
 	getServices: function() {
 
