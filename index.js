@@ -200,9 +200,9 @@ Thermostat.prototype = {
 		}.bind(this));
 	},
 	setTargetTemperature: function(value, callback) {
-		this.log("setTargetTemperature from:", this.apiroute+"/targetTemperature/"+value);
+		this.log("setTargetTemperature from:", this.apiroute+"/happ_thermstat?action=setSetpoint&Setpoint="+value+"00");
 		request.get({
-			url: this.apiroute+"/targetTemperature/"+value,
+			url: this.apiroute+"/happ_thermstat?action=setSetpoint&Setpoint="+value+"00",
 			auth : this.auth
 		}, function(err, response, body) {
 			if (!err && response.statusCode == 200) {
