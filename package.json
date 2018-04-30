@@ -3,6 +3,7 @@
   "version": "0.0.2",
   "description": "Using the rooted Toon with HomeBridge",
   "license": "ISC",
+  "main": "index.js",
   "keywords": [
     "homebridge-plugin", "toon"
   ],
