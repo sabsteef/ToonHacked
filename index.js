@@ -85,7 +85,7 @@ Thermostat.prototype = {
 				this.log("response success");
 				var json = JSON.parse(body); //{targetHeatingCoolingState":3,"currentHeatingCoolingState":0,"targetTemperature":10,"temperature":12,"humidity":98}
 				var state = json.programState
-				if (state == 0 && json.currentTemp == this.minTemp+"00"){ //check if Toon is in off state
+				if (state == 0 && json.currentSetpoint == 1600){ //check if Toon is in off state
 				state = 0;
 				}
 				else if (state == 0){
@@ -118,7 +118,7 @@ Thermostat.prototype = {
 				this.log("response success");
 				var json = JSON.parse(body); //{"targetHeatingCoolingState":3,"currentHeatingCoolingState":0,"targetTemperature":10,"temperature":12,"humidity":98}
 				var state = json.programState
-				if (state == 0 && json.currentTemp == this.minTemp+"00"){ //check if Toon is in off state
+				if (state == 0 && json.currentSetpoint == 1600){ //check if Toon is in off state
 				state = 0;
 				}
 				else if (state == 0){//check if Toon is in program off state
@@ -155,7 +155,7 @@ Thermostat.prototype = {
 			value = 0;	
 			}
 			else if(value === 0) {
-			this.log("the value is 0 Set Temp", this.minTemp);
+			//this.log("the value is 0 Set Temp", this.minTemp);
 			value = 0;
 			//this.targetTemperature = this.minTemp+"00";
 			}
