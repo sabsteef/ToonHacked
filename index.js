@@ -150,7 +150,7 @@ Thermostat.prototype = {
                                   this.log("CurrentTemperature %s", json.currentTemp);
 				  var output = (parseFloat(json.currentTemp) / 100).toFixed(2);
                                   //this.currentTemperature = output;
-				  this.currentTemperature = parseFloat(json.currentTemp;
+				  this.currentTemperature = parseFloat(json.currentTemp);
 				this.log("CurrentTemperature %s", output);
 
                                 }
