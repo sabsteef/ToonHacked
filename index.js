@@ -76,16 +76,16 @@ Thermostat.prototype = {
 	},
 	// Required
 	getCurrentHeatingCoolingState: function(callback) {
-		this.log("getCurrentHeatingCoolingState from:", this.apiroute+"/status");
+		this.log("getCurrentHeatingCoolingState from:", this.apiroute+"/happ_thermstat?action=getThermostatInfo");
 		request.get({
-			url: this.apiroute+"/status",
+			url: this.apiroute+"/happ_thermstat?action=getThermostatInfo",
 			auth : this.auth
 		}, function(err, response, body) {
 			if (!err && response.statusCode == 200) {
 				this.log("response success");
 				var json = JSON.parse(body); //{targetHeatingCoolingState":3,"currentHeatingCoolingState":0,"targetTemperature":10,"temperature":12,"humidity":98}
-				this.log("currentHeatingCoolingState is %s", json.currentHeatingCoolingState);
-				this.currentHeatingCoolingState = json.currentHeatingCoolingState;
+				this.log("currentHeatingCoolingState is %s", json.programState);
+				this.currentHeatingCoolingState = json.programState;
 				this.service.setCharacteristic(Characteristic.CurrentHeatingCoolingState, this.currentHeatingCoolingState);
 				
 				callback(null, this.currentHeatingCoolingState); // success
@@ -96,16 +96,16 @@ Thermostat.prototype = {
 		}.bind(this));
 	},
 	getTargetHeatingCoolingState: function(callback) {
-		this.log("getTargetHeatingCoolingState from:", this.apiroute+"/status");
+		this.log("getTargetHeatingCoolingState from:", this.apiroute+"/happ_thermstat?action=getThermostatInfo");
 		request.get({
-			url: this.apiroute+"/status",
+			url: this.apiroute+"/happ_thermstat?action=getThermostatInfo",
 			auth : this.auth
 		}, function(err, response, body) {
 			if (!err && response.statusCode == 200) {
 				this.log("response success");
 				var json = JSON.parse(body); //{"targetHeatingCoolingState":3,"currentHeatingCoolingState":0,"targetTemperature":10,"temperature":12,"humidity":98}
-				this.log("TargetHeatingCoolingState received is %s", json.targetHeatingCoolingState, json.targetStateCode);
-				this.targetHeatingCoolingState = json.targetHeatingCoolingState !== undefined? json.targetHeatingCoolingState : json.targetStateCode;
+				this.log("TargetHeatingCoolingState received is %s", json.programState);
+				this.targetHeatingCoolingState = json.programState;
 				this.log("TargetHeatingCoolingState is now %s", this.targetHeatingCoolingState);
 				//this.service.setCharacteristic(Characteristic.TargetHeatingCoolingState, this.targetHeatingCoolingState);
 				
@@ -123,7 +123,7 @@ Thermostat.prototype = {
 			this.log("setTargetHeatingCoolingState from/to:", this.targetHeatingCoolingState, value);
 			
 			request.get({
-				url: this.apiroute + '/targetHeatingCoolingState/' + value,
+				url: this.apiroute + '/happ_thermstat?action=changeSchemeState&state=' + value,
 				auth : this.auth
 			}, function(err, response, body) {
 				if (!err && response.statusCode == 200) {
