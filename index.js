@@ -148,9 +148,8 @@ Thermostat.prototype = {
 				if (json.currentTemp != undefined)
                                 {
                                   this.log("CurrentTemperature %s", json.currentTemp);
-				  var output = (parseFloat(json.currentTemp) / 100).toFixed(2);
-                                  //this.currentTemperature = output;
-				  this.currentTemperature = parseFloat(json.currentTemp);
+				  var output = (parseFloat(json.currentTemp) / 100).toFixed(0);
+                                  this.currentTemperature = output;
 				this.log("CurrentTemperature %s", output);
 
                                 }
@@ -176,7 +175,7 @@ Thermostat.prototype = {
 			if (!err && response.statusCode == 200) {
 				this.log("response success");
 				var json = JSON.parse(body); //{targetHeatingCoolingState":3,"currentHeatingCoolingState":0"temperature":"18.10","humidity":"34.10"}
-				var output = (parseFloat(json.currentSetpoint) / 100).toFixed(2);
+				var output = (parseFloat(json.currentSetpoint) / 100).toFixed(0);
 				this.targetTemperature = output;
 				this.log("Target temperature is %s", this.targetTemperature);
 				callback(null, this.targetTemperature); // success
