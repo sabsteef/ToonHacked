@@ -151,13 +151,13 @@ Thermostat.prototype = {
 			value = 1;	
 			}
 			else if(value === 1) {
-			this.log("the value is 1 Change Value to 0");
+			//this.log("the value is 1 Change Value to 0");
 			value = 0;	
 			}
 			else if(value === 0) {
 			this.log("the value is 0 Set Temp", this.minTemp);
 			value = 0;
-			this.targetTemperature = this.minTemp+"00";
+			//this.targetTemperature = this.minTemp+"00";
 			}
 			else{
 			callback(err);	
