@@ -53,7 +53,7 @@ function Thermostat(log, config) {
 	//Characteristic.CurrentHeatingCoolingState.HEAT = 1;
 	//Characteristic.CurrentHeatingCoolingState.COOL = 2;
 	this.heatingCoolingState = Characteristic.CurrentHeatingCoolingState.AUTO;
-	this.targetTemperature = 21;
+	this.targetTemperature = 16;
 	this.targetRelativeHumidity = 0.5;
 	this.heatingThresholdTemperature = 25;
 	this.coolingThresholdTemperature = 5;
@@ -62,7 +62,7 @@ function Thermostat(log, config) {
 	//Characteristic.TargetHeatingCoolingState.HEAT = 1;
 	//Characteristic.TargetHeatingCoolingState.COOL = 2;
 	//Characteristic.TargetHeatingCoolingState.AUTO = 3;
-	this.targetHeatingCoolingState = Characteristic.TargetHeatingCoolingState.AUTO;
+	this.targetHeatingCoolingState = Characteristic.TargetHeatingCoolingState.Auto;
 
 	this.service = new Service.Thermostat(this.name);
 
@@ -120,6 +120,10 @@ Thermostat.prototype = {
 		if(value === undefined) {
 			callback(); //Some stuff call this without value doing shit with the rest
 		} else {
+			if(value === 3) {
+			this.log("the value is 3 Change Value to 1");
+			value = 1;	
+			}
 			this.log("setTargetHeatingCoolingState from/to:", this.targetHeatingCoolingState, value);
 			
 			request.get({
