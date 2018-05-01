@@ -146,18 +146,18 @@ Thermostat.prototype = {
 		if(value === undefined) {
 			callback(); //Some stuff call this without value doing shit with the rest
 		} else {
-			var Value2 = value 
+			var Value2 = value
 			if(value === 3) {
 			this.log("the value is 3 Change Value to 1");
-			value = 1;	
+			Value2 = 1;	
 			}
 			else if(value === 1) {
 			//this.log("the value is 1 Change Value to 0");
-			value = 0;	
+			Value2 = 0;	
 			}
 			else if(value === 0) {
 			//this.log("the value is 0 Set Temp", this.minTemp);
-			value = 0;
+			Value2 = 0;
 			//this.targetTemperature = this.minTemp+"00";
 			}
 			else{
@@ -167,13 +167,13 @@ Thermostat.prototype = {
 			this.log("setTargetHeatingCoolingState from/to:", this.targetHeatingCoolingState, value);
 			
 			request.get({
-				url: this.apiroute + '/happ_thermstat?action=changeSchemeState&state=' + value,
+				url: this.apiroute + '/happ_thermstat?action=changeSchemeState&state=' + Value2,
 				auth : this.auth
 			}, function(err, response, body) {
 				if (!err && response.statusCode == 200) {
 					this.log("response success");
-					//this.service.setCharacteristic(Characteristic.TargetHeatingCoolingState, Value2);
-					this.targetHeatingCoolingState = Value2;
+					//this.service.setCharacteristic(Characteristic.TargetHeatingCoolingState, value);
+					this.targetHeatingCoolingState = value;
 					callback(null); // success
 				} else {
 					this.log("Error getting state: %s", err);
