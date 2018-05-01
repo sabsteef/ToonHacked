@@ -146,6 +146,7 @@ Thermostat.prototype = {
 		if(value === undefined) {
 			callback(); //Some stuff call this without value doing shit with the rest
 		} else {
+			var Value2 = value 
 			if(value === 3) {
 			this.log("the value is 3 Change Value to 1");
 			value = 1;	
@@ -171,7 +172,7 @@ Thermostat.prototype = {
 			}, function(err, response, body) {
 				if (!err && response.statusCode == 200) {
 					this.log("response success");
-					//this.service.setCharacteristic(Characteristic.TargetHeatingCoolingState, value);
+					this.service.setCharacteristic(Characteristic.TargetHeatingCoolingState, Value2);
 					this.targetHeatingCoolingState = value;
 					callback(null); // success
 				} else {
