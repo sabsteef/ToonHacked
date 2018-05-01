@@ -85,7 +85,7 @@ Thermostat.prototype = {
 				this.log("response success");
 				var json = JSON.parse(body); //{targetHeatingCoolingState":3,"currentHeatingCoolingState":0,"targetTemperature":10,"temperature":12,"humidity":98}
 				var state = json.programState
-				if (state == 0 && json.currentTemp = this.minTemp+"00"){ //check if Toon is in off state
+				if (state == 0 && json.currentTemp == this.minTemp+"00"){ //check if Toon is in off state
 				state = 0;
 				}
 				else if (state == 0){
