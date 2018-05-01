@@ -55,14 +55,14 @@ function Thermostat(log, config) {
 	this.heatingCoolingState = Characteristic.CurrentHeatingCoolingState.AUTO;
 	//this.targetTemperature = 16;
 	//this.targetRelativeHumidity = 0.5;
-	//this.heatingThresholdTemperature = 25;
-	//this.coolingThresholdTemperature = 5;
+	this.heatingThresholdTemperature = 19;
+	this.coolingThresholdTemperature = 5;
 	// The value property of TargetHeatingCoolingState must be one of the following:
 	//Characteristic.TargetHeatingCoolingState.OFF = 0;
 	//Characteristic.TargetHeatingCoolingState.HEAT = 1;
 	//Characteristic.TargetHeatingCoolingState.COOL = 2;
 	//Characteristic.TargetHeatingCoolingState.AUTO = 3;
-	this.targetHeatingCoolingState = Characteristic.TargetHeatingCoolingState.Auto;
+	this.targetHeatingCoolingState = Characteristic.TargetHeatingCoolingState.AUTO;
 
 	this.service = new Service.Thermostat(this.name);
 
