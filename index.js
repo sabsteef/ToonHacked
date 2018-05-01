@@ -84,7 +84,7 @@ Thermostat.prototype = {
 			if (!err && response.statusCode == 200) {
 				this.log("response success");
 				var json = JSON.parse(body); //{targetHeatingCoolingState":3,"currentHeatingCoolingState":0,"targetTemperature":10,"temperature":12,"humidity":98}
-				var state = json.programState
+				var state = json.burnerInfo
 				this.log("currentHeatingCoolingState is %s", state);
 				this.currentHeatingCoolingState = state;
 				this.service.setCharacteristic(Characteristic.CurrentHeatingCoolingState, this.currentHeatingCoolingState);
@@ -152,7 +152,7 @@ Thermostat.prototype = {
 			state = 1;
 			}
 			
-			this.log("setTargetHeatingCoolingState from/to:", this.targetHeatingCoolingState, value);
+			this.log("setTargetHeatingCoolingState from/to:", this.targetHeatingCoolingState, Value2);
 			
 			request.get({
 				url: this.apiroute + '/happ_thermstat?action=changeSchemeState&state=' + Value2,
