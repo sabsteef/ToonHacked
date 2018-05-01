@@ -52,7 +52,7 @@ function Thermostat(log, config) {
 	//Characteristic.CurrentHeatingCoolingState.OFF = 0;
 	//Characteristic.CurrentHeatingCoolingState.HEAT = 1;
 	//Characteristic.CurrentHeatingCoolingState.COOL = 2;
-	this.heatingCoolingState = Characteristic.CurrentHeatingCoolingState.AUTO;
+	//this.heatingCoolingState = Characteristic.CurrentHeatingCoolingState.AUTO;
 	//this.targetTemperature = 16;
 	//this.targetRelativeHumidity = 0.5;
 	this.heatingThresholdTemperature = 19;
@@ -62,7 +62,7 @@ function Thermostat(log, config) {
 	//Characteristic.TargetHeatingCoolingState.HEAT = 1;
 	//Characteristic.TargetHeatingCoolingState.COOL = 2;
 	//Characteristic.TargetHeatingCoolingState.AUTO = 3;
-	this.targetHeatingCoolingState = Characteristic.TargetHeatingCoolingState.AUTO;
+	this.targetHeatingCoolingState = Characteristic.TargetHeatingCoolingState.HEAT;
 
 	this.service = new Service.Thermostat(this.name);
 
@@ -84,8 +84,18 @@ Thermostat.prototype = {
 			if (!err && response.statusCode == 200) {
 				this.log("response success");
 				var json = JSON.parse(body); //{targetHeatingCoolingState":3,"currentHeatingCoolingState":0,"targetTemperature":10,"temperature":12,"humidity":98}
-				this.log("currentHeatingCoolingState is %s", json.programState);
-				this.currentHeatingCoolingState = json.programState;
+				var state = json.programState
+				if (state == 0 && json.currentTemp == 1600){ //check if Toon is in off state
+				state = 0;
+				}
+				if (state == 0){
+				state = 1;	
+				}
+				if (state == 1){
+				state == 3;	
+				}
+				this.log("currentHeatingCoolingState is %s", state);
+				this.currentHeatingCoolingState = state;
 				this.service.setCharacteristic(Characteristic.CurrentHeatingCoolingState, this.currentHeatingCoolingState);
 				
 				callback(null, this.currentHeatingCoolingState); // success
@@ -104,8 +114,18 @@ Thermostat.prototype = {
 			if (!err && response.statusCode == 200) {
 				this.log("response success");
 				var json = JSON.parse(body); //{"targetHeatingCoolingState":3,"currentHeatingCoolingState":0,"targetTemperature":10,"temperature":12,"humidity":98}
-				this.log("TargetHeatingCoolingState received is %s", json.programState);
-				this.targetHeatingCoolingState = json.programState;
+				var state = json.programState
+				if (state == 0 && json.currentTemp == this.minTemp+"00"){ //check if Toon is in off state
+				state = 0;
+				}
+				if (state == 0){//check if Toon is in program off state
+				state = 1;	
+				}
+				if (state == 1){//check if Toon is in program on state
+				state = 3;	
+				}
+				this.log("currentHeatingCoolingState is %s", state);
+				this.currentHeatingCoolingState = state;
 				this.log("TargetHeatingCoolingState is now %s", this.targetHeatingCoolingState);
 				//this.service.setCharacteristic(Characteristic.TargetHeatingCoolingState, this.targetHeatingCoolingState);
 				
@@ -120,10 +140,20 @@ Thermostat.prototype = {
 		if(value === undefined) {
 			callback(); //Some stuff call this without value doing shit with the rest
 		} else {
-			//if(value === 3) {
-			//this.log("the value is 3 Change Value to 1");
-			//value = 1;	
+			if(value === 3) {
+			this.log("the value is 3 Change Value to 1");
+			value = 1;	
 			}
+			if(value === 1) {
+			this.log("the value is 1 Change Value to 0");
+			value = 0;	
+			}
+			if(value === 0) {
+			this.log("the value is 0 Set Temp", this.minTemp);
+			value = 0;
+			this.targetTemperature = this.minTemp+"00";
+			}
+			
 			this.log("setTargetHeatingCoolingState from/to:", this.targetHeatingCoolingState, value);
 			
 			request.get({
@@ -137,8 +167,7 @@ Thermostat.prototype = {
 					callback(null); // success
 				} else {
 					this.log("Error getting state: %s", err);
-					//callback(err);
-					callback(null); // no action needed
+					callback(err);
 				}
 			}.bind(this));
 		}
