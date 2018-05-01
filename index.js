@@ -171,7 +171,7 @@ Thermostat.prototype = {
 			}, function(err, response, body) {
 				if (!err && response.statusCode == 200) {
 					this.log("response success");
-					this.service.setCharacteristic(Characteristic.TargetHeatingCoolingState, value);
+					//this.service.setCharacteristic(Characteristic.TargetHeatingCoolingState, value);
 					this.targetHeatingCoolingState = value;
 					callback(null); // success
 				} else {
