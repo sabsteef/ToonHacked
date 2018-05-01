@@ -56,7 +56,7 @@ function Thermostat(log, config) {
 	//this.targetTemperature = 16;
 	//this.targetRelativeHumidity = 0.5;
 	this.heatingThresholdTemperature = 19;
-	this.coolingThresholdTemperature = 5;
+	this.coolingThresholdTemperature = 15;
 	// The value property of TargetHeatingCoolingState must be one of the following:
 	//Characteristic.TargetHeatingCoolingState.OFF = 0;
 	//Characteristic.TargetHeatingCoolingState.HEAT = 1;
