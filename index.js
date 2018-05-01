@@ -166,12 +166,12 @@ Thermostat.prototype = {
 			this.log("setTargetHeatingCoolingState from/to:", this.targetHeatingCoolingState, value);
 			
 			request.get({
-				//url: this.apiroute + '/happ_thermstat?action=changeSchemeState&state=' + value,
-				//auth : this.auth
+				url: this.apiroute + '/happ_thermstat?action=changeSchemeState&state=' + value,
+				auth : this.auth
 			}, function(err, response, body) {
 				if (!err && response.statusCode == 200) {
 					this.log("response success");
-					//this.service.setCharacteristic(Characteristic.TargetHeatingCoolingState, value);
+					this.service.setCharacteristic(Characteristic.TargetHeatingCoolingState, value);
 					this.targetHeatingCoolingState = value;
 					callback(null); // success
 				} else {
