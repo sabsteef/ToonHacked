@@ -120,15 +120,15 @@ Thermostat.prototype = {
 		if(value === undefined) {
 			callback(); //Some stuff call this without value doing shit with the rest
 		} else {
-			if(value === 3) {
-			this.log("the value is 3 Change Value to 1");
-			value = 1;	
+			//if(value === 3) {
+			//this.log("the value is 3 Change Value to 1");
+			//value = 1;	
 			}
 			this.log("setTargetHeatingCoolingState from/to:", this.targetHeatingCoolingState, value);
 			
 			request.get({
-				url: this.apiroute + '/happ_thermstat?action=changeSchemeState&state=' + value,
-				auth : this.auth
+				//url: this.apiroute + '/happ_thermstat?action=changeSchemeState&state=' + value,
+				//auth : this.auth
 			}, function(err, response, body) {
 				if (!err && response.statusCode == 200) {
 					this.log("response success");
@@ -137,7 +137,8 @@ Thermostat.prototype = {
 					callback(null); // success
 				} else {
 					this.log("Error getting state: %s", err);
-					callback(err);
+					//callback(err);
+					callback(null); // no action needed
 				}
 			}.bind(this));
 		}
