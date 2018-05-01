@@ -1,5 +1,4 @@
 /*
-
     "accessories": [
         {
             "accessory": "Thermostat",
@@ -8,10 +7,7 @@
             //optional
             "maxTemp": "26",
             "minTemp": "15",
-
         }
-
-
 */
 
 
@@ -46,23 +42,23 @@ function Thermostat(log, config) {
 	//Characteristic.TemperatureDisplayUnits.CELSIUS = 0;
 	//Characteristic.TemperatureDisplayUnits.FAHRENHEIT = 1;
 	this.temperatureDisplayUnits = Characteristic.TemperatureDisplayUnits.CELSIUS;
-	//this.currentTemperature = 19;
+	this.currentTemperature = 19;
 	this.currentRelativeHumidity = 0.70;
 	// The value property of CurrentHeatingCoolingState must be one of the following:
 	//Characteristic.CurrentHeatingCoolingState.OFF = 0;
 	//Characteristic.CurrentHeatingCoolingState.HEAT = 1;
 	//Characteristic.CurrentHeatingCoolingState.COOL = 2;
-	this.heatingCoolingState = Characteristic.CurrentHeatingCoolingState.HEAT;
-	//this.targetTemperature = 16;
+	this.heatingCoolingState = Characteristic.CurrentHeatingCoolingState.OFF;
+	this.targetTemperature = 21;
 	this.targetRelativeHumidity = 0.5;
-	this.heatingThresholdTemperature = 19;
-	this.coolingThresholdTemperature = 15;
+	this.heatingThresholdTemperature = 25;
+	this.coolingThresholdTemperature = 5;
 	// The value property of TargetHeatingCoolingState must be one of the following:
 	//Characteristic.TargetHeatingCoolingState.OFF = 0;
 	//Characteristic.TargetHeatingCoolingState.HEAT = 1;
 	//Characteristic.TargetHeatingCoolingState.COOL = 2;
 	//Characteristic.TargetHeatingCoolingState.AUTO = 3;
-	this.targetHeatingCoolingState = Characteristic.TargetHeatingCoolingState.HEAT;
+	this.targetHeatingCoolingState = Characteristic.TargetHeatingCoolingState.AUTO;
 
 	this.service = new Service.Thermostat(this.name);
 
@@ -76,17 +72,16 @@ Thermostat.prototype = {
 	},
 	// Required
 	getCurrentHeatingCoolingState: function(callback) {
-		this.log("getCurrentHeatingCoolingState from:", this.apiroute+"/happ_thermstat?action=getThermostatInfo");
+		this.log("getCurrentHeatingCoolingState from:", this.apiroute+"/status");
 		request.get({
-			url: this.apiroute+"/happ_thermstat?action=getThermostatInfo",
+			url: this.apiroute+"/status",
 			auth : this.auth
 		}, function(err, response, body) {
 			if (!err && response.statusCode == 200) {
 				this.log("response success");
 				var json = JSON.parse(body); //{targetHeatingCoolingState":3,"currentHeatingCoolingState":0,"targetTemperature":10,"temperature":12,"humidity":98}
-				var state = json.burnerInfo
-				this.log("currentHeatingCoolingState is %s", state);
-				this.currentHeatingCoolingState = state;
+				this.log("currentHeatingCoolingState is %s", json.currentHeatingCoolingState);
+				this.currentHeatingCoolingState = json.currentHeatingCoolingState;
 				this.service.setCharacteristic(Characteristic.CurrentHeatingCoolingState, this.currentHeatingCoolingState);
 				
 				callback(null, this.currentHeatingCoolingState); // success
@@ -97,29 +92,16 @@ Thermostat.prototype = {
 		}.bind(this));
 	},
 	getTargetHeatingCoolingState: function(callback) {
-		this.log("getTargetHeatingCoolingState from:", this.apiroute+"/happ_thermstat?action=getThermostatInfo");
+		this.log("getTargetHeatingCoolingState from:", this.apiroute+"/status");
 		request.get({
-			url: this.apiroute+"/happ_thermstat?action=getThermostatInfo",
+			url: this.apiroute+"/status",
 			auth : this.auth
 		}, function(err, response, body) {
 			if (!err && response.statusCode == 200) {
 				this.log("response success");
 				var json = JSON.parse(body); //{"targetHeatingCoolingState":3,"currentHeatingCoolingState":0,"targetTemperature":10,"temperature":12,"humidity":98}
-				var state = json.programState
-				if (state == 0 && json.currentSetpoint == 1600){ //check if Toon is in off state
-				state = 0;
-				}
-				else if (state == 0){//check if Toon is in program off state
-				state = 1;	
-				}
-				else if (state == 1){//check if Toon is in program on state
-				state = 3;	
-				}
-				else{
-				state = 1;	
-				}
-				this.log("currentHeatingCoolingState is %s", state);
-				this.currentHeatingCoolingState = state;
+				this.log("TargetHeatingCoolingState received is %s", json.targetHeatingCoolingState, json.targetStateCode);
+				this.targetHeatingCoolingState = json.targetHeatingCoolingState !== undefined? json.targetHeatingCoolingState : json.targetStateCode;
 				this.log("TargetHeatingCoolingState is now %s", this.targetHeatingCoolingState);
 				//this.service.setCharacteristic(Characteristic.TargetHeatingCoolingState, this.targetHeatingCoolingState);
 				
@@ -134,28 +116,10 @@ Thermostat.prototype = {
 		if(value === undefined) {
 			callback(); //Some stuff call this without value doing shit with the rest
 		} else {
-			var Value2 = value
-			if(value === 3) {
-			this.log("the value is 3 Change Value to 1");
-			Value2 = 1;	
-			}
-			else if(value === 1) {
-			//this.log("the value is 1 Change Value to 0");
-			Value2 = 0;	
-			}
-			else if(value === 0) {
-			//this.log("the value is 0 Set Temp", this.minTemp);
-			Value2 = 0;
-			//this.targetTemperature = this.minTemp+"00";
-			}
-			else{
-			state = 1;
-			}
-			
-			this.log("setTargetHeatingCoolingState from/to:", this.targetHeatingCoolingState, Value2);
+			this.log("setTargetHeatingCoolingState from/to:", this.targetHeatingCoolingState, value);
 			
 			request.get({
-				url: this.apiroute + '/happ_thermstat?action=changeSchemeState&state=' + Value2,
+				url: this.apiroute + '/targetHeatingCoolingState/' + value,
 				auth : this.auth
 			}, function(err, response, body) {
 				if (!err && response.statusCode == 200) {
