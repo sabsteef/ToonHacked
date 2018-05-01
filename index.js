@@ -85,18 +85,6 @@ Thermostat.prototype = {
 				this.log("response success");
 				var json = JSON.parse(body); //{targetHeatingCoolingState":3,"currentHeatingCoolingState":0,"targetTemperature":10,"temperature":12,"humidity":98}
 				var state = json.programState
-				if (state == 0 && json.currentSetpoint == 1600){ //check if Toon is in off state
-				state = 0;
-				}
-				else if (state == 0){
-				state = 1;	
-				}
-				else if (state == 1){
-				state == 3;	
-				}
-				else{
-				state = 1;
-				}
 				this.log("currentHeatingCoolingState is %s", state);
 				this.currentHeatingCoolingState = state;
 				this.service.setCharacteristic(Characteristic.CurrentHeatingCoolingState, this.currentHeatingCoolingState);
