@@ -52,7 +52,7 @@ function Thermostat(log, config) {
 	//Characteristic.CurrentHeatingCoolingState.OFF = 0;
 	//Characteristic.CurrentHeatingCoolingState.HEAT = 1;
 	//Characteristic.CurrentHeatingCoolingState.COOL = 2;
-	//this.heatingCoolingState = Characteristic.CurrentHeatingCoolingState.AUTO;
+	this.heatingCoolingState = Characteristic.CurrentHeatingCoolingState.HEAT;
 	//this.targetTemperature = 16;
 	//this.targetRelativeHumidity = 0.5;
 	this.heatingThresholdTemperature = 19;
@@ -95,7 +95,7 @@ Thermostat.prototype = {
 				state == 3;	
 				}
 				else{
-				callback(err);	
+				state = 1;
 				}
 				this.log("currentHeatingCoolingState is %s", state);
 				this.currentHeatingCoolingState = state;
@@ -128,7 +128,7 @@ Thermostat.prototype = {
 				state = 3;	
 				}
 				else{
-				callback(err);	
+				state = 1;	
 				}
 				this.log("currentHeatingCoolingState is %s", state);
 				this.currentHeatingCoolingState = state;
@@ -161,7 +161,7 @@ Thermostat.prototype = {
 			//this.targetTemperature = this.minTemp+"00";
 			}
 			else{
-			callback(err);	
+			state = 1;
 			}
 			
 			this.log("setTargetHeatingCoolingState from/to:", this.targetHeatingCoolingState, value);
