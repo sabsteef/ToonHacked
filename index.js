@@ -47,14 +47,14 @@ function Thermostat(log, config) {
 	//Characteristic.TemperatureDisplayUnits.FAHRENHEIT = 1;
 	this.temperatureDisplayUnits = Characteristic.TemperatureDisplayUnits.CELSIUS;
 	//this.currentTemperature = 19;
-	//this.currentRelativeHumidity = 0.70;
+	this.currentRelativeHumidity = 0.70;
 	// The value property of CurrentHeatingCoolingState must be one of the following:
 	//Characteristic.CurrentHeatingCoolingState.OFF = 0;
 	//Characteristic.CurrentHeatingCoolingState.HEAT = 1;
 	//Characteristic.CurrentHeatingCoolingState.COOL = 2;
 	this.heatingCoolingState = Characteristic.CurrentHeatingCoolingState.HEAT;
 	//this.targetTemperature = 16;
-	//this.targetRelativeHumidity = 0.5;
+	this.targetRelativeHumidity = 0.5;
 	this.heatingThresholdTemperature = 19;
 	this.coolingThresholdTemperature = 15;
 	// The value property of TargetHeatingCoolingState must be one of the following:
