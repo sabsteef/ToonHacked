@@ -116,7 +116,7 @@ Thermostat.prototype = {
 		if(value === undefined) {
 			callback(); //Some stuff call this without value doing shit with the rest
 		} 
-		/*else {
+		else {/*
 			this.log("setTargetHeatingCoolingState from/to:", this.targetHeatingCoolingState, value);
 			
 			request.get({
