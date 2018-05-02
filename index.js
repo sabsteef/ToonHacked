@@ -71,17 +71,17 @@ Thermostat.prototype = {
 		callback(null);
 	},
 	// Required
-	getCurrentHeatingCoolingState: function(callback) {
-		this.log("getCurrentHeatingCoolingState from:", this.apiroute+"/status");
+	getCurrentHeatingCoolingState: function(callback) { // Get burner info = 1 active, 0 disabled 
+		this.log("getCurrentHeatingCoolingState from:", this.apiroute+"/happ_thermstat?action=getThermostatInfo");
 		request.get({
-			url: this.apiroute+"/status",
+			url: this.apiroute+"/happ_thermstat?action=getThermostatInfo",
 			auth : this.auth
 		}, function(err, response, body) {
 			if (!err && response.statusCode == 200) {
 				this.log("response success");
 				var json = JSON.parse(body); //{targetHeatingCoolingState":3,"currentHeatingCoolingState":0,"targetTemperature":10,"temperature":12,"humidity":98}
-				this.log("currentHeatingCoolingState is %s", json.currentHeatingCoolingState);
-				this.currentHeatingCoolingState = json.currentHeatingCoolingState;
+				this.log("currentHeatingCoolingState is %s", json.burnerInfo);
+				this.currentHeatingCoolingState = json.burnerInfo;
 				this.service.setCharacteristic(Characteristic.CurrentHeatingCoolingState, this.currentHeatingCoolingState);
 				
 				callback(null, this.currentHeatingCoolingState); // success
