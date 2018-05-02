@@ -249,21 +249,21 @@ Thermostat.prototype = {
 	setTargetRelativeHumidity: function(value, callback) { // change function to set other options
 		this.log("setTargetRelativeHumidity  from:", this.apiroute+"/happ_thermstat?action=setSetpoint&Setpoint="+value+"00");
 		if (value == 0 || value == 1){ // used for program on / off
-		    var URL = "/happ_thermstat?action=changeSchemeState&state="
+		    var URL = "/happ_thermstat?action=changeSchemeState&state=";
 		}
 		else if (value == 10 || value == 11 || value == 12 || value = 13){  // Set program 0=Comfort 1=Thuis 2=Slapen 3=weg
-			  var URL = "/happ_thermstat?action=changeSchemeState&state=2&temperatureState="
-			  if (value == 10 ){
-			      value = 0
+			  var URL = "/happ_thermstat?action=changeSchemeState&state=2&temperatureState=";
+			  if (value == 10){
+			      value = 0;
 			      }
 			  else if (value == 11 ){
-			      value = 1
+			      value = 1;
 			      }
 			  else if (value == 12 ){
-			      value = 2
+			      value = 2;
 			      }
 			  else if (value == 13 ){
-			      value = 3
+			      value = 3;
 			      }
 			 }
 		request.get({
