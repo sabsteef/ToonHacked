@@ -145,16 +145,13 @@ Thermostat.prototype = {
 				this.log("response success");
 				var json = JSON.parse(body); //{targetHeatingCoolingState":3,"currentHeatingCoolingState":0,"temperature":"18.10","humidity":"34.10"}
 
-				if (json.currentTemp != undefined)
-                                {
+				if (json.currentTemp != undefined) {
                                   this.log("CurrentTemperature %s", json.currentTemp);
 				  var output = (parseFloat(json.currentTemp) / 100).toFixed(0);
                                   this.currentTemperature = output;
-				this.log("CurrentTemperature %s", output);
-
+				  this.log("CurrentTemperature %s", output);
                                 }
-                                else
-                                {
+                                else {
                                   this.log("Temperature %s", json.temperature);
                                   this.currentTemperature = parseFloat(json.temperature);
                                 }
@@ -247,11 +244,11 @@ Thermostat.prototype = {
 		callback(error, this.targetRelativeHumidity);
 	},
 	setTargetRelativeHumidity: function(value, callback) { // change function to set other options
-		this.log("setTargetRelativeHumidity  from:", this.apiroute+"/happ_thermstat?action=setSetpoint&Setpoint="+value+"00");
-		if (value == 0 || value == 1){ // used for program on / off
+		this.log("start set aditional");
+		if (value == 0 || value == 1) { // used for program on / off
 		    var URL = "/happ_thermstat?action=changeSchemeState&state=";
-		}
-		else if (value == 10 || value == 11 || value == 12 || value = 13){  // Set program 0=Comfort 1=Thuis 2=Slapen 3=weg
+		    }
+		else if (value == 10 || value == 11 || value == 12 || value == 13){  // Set program 0=Comfort 1=Thuis 2=Slapen 3=weg
 			  var URL = "/happ_thermstat?action=changeSchemeState&state=2&temperatureState=";
 			  if (value == 10){
 			      value = 0;
