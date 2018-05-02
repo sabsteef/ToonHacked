@@ -7,7 +7,7 @@
             //optional
             "maxTemp": "26",
             "minTemp": "10",
-        }
+         }
 */
 
 
