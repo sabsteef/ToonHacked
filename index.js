@@ -214,7 +214,7 @@ Thermostat.prototype = {
 
 	// Optional
 	getCurrentRelativeHumidity: function(callback) {
-		this.log("getCurrentRelativeHumidity from:", this.apiroute+"/status");
+		this.log("getCurrentRelativeHumidity from:", this.apiroute+"/happ_thermstat?action=getThermostatInfo");
 		request.get({
 			url: this.apiroute+"/status",
 			auth : this.auth
@@ -246,12 +246,47 @@ Thermostat.prototype = {
 		var error = null;
 		callback(error, this.targetRelativeHumidity);
 	},
-	setTargetRelativeHumidity: function(value, callback) {
-		this.log("setTargetRelativeHumidity from/to :", this.targetRelativeHumidity, value);
-		this.log("setTargetRelativeHumidity not implemented with API");
-		this.targetRelativeHumidity = value;
-		var error = null;
-		callback(error);
+	setTargetRelativeHumidity: function(value, callback) { // change function to set other options
+		this.log("setTargetRelativeHumidity  from:", this.apiroute+"/happ_thermstat?action=setSetpoint&Setpoint="+value+"00");
+		if (value == 0 || value == 1){ // used for program on / off
+		    var URL = "/happ_thermstat?action=changeSchemeState&state="
+		}
+		else if (value == 10 || value == 11 || value == 12 || value = 13){  // Set program 0=Comfort 1=Thuis 2=Slapen 3=weg
+			  var URL = "/happ_thermstat?action=changeSchemeState&state=2&temperatureState="
+			  if (value == 10 ){
+			      value = 0
+			      }
+			  else if (value == 11 ){
+			      value = 1
+			      }
+			  else if (value == 12 ){
+			      value = 2
+			      }
+			  else if (value == 13 ){
+			      value = 3
+			      }
+			 }
+		request.get({
+			url: this.apiroute+URL+value,
+			auth : this.auth
+		}, function(err, response, body) {
+			if (!err && response.statusCode == 200) {
+				this.log("response success");
+				callback(null); // success
+			} else {
+				this.log("Error getting state: %s", err);
+				callback(err);
+			}
+		}.bind(this));
+		
+		
+		
+		
+		//this.log("setTargetRelativeHumidity from/to :", this.targetRelativeHumidity, value);
+		//this.log("setTargetRelativeHumidity not implemented with API");
+		//this.targetRelativeHumidity = value;
+		//var error = null;
+		//callback(error);
 	},
 /*	getCoolingThresholdTemperature: function(callback) {
 		this.log("getCoolingThresholdTemperature: ", this.coolingThresholdTemperature);
