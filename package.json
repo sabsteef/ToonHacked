@@ -1,6 +1,6 @@
 {
   "name": "homebridge-toonhacked",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Using your rooted Toon with HomeBridge",
   "author": "Stefan Ringelberg",
   "license": "ISC",
