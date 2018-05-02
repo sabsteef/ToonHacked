@@ -25,7 +25,7 @@ https://github.com/martenjacobs/ToonRooter
 heres a howto, to install homebridge:
 https://github.com/nfarina/homebridge
 
-##Version:
+## Version:
 **1.0.0**
 - full version
 
