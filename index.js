@@ -115,7 +115,8 @@ Thermostat.prototype = {
 	setTargetHeatingCoolingState: function(value, callback) {
 		if(value === undefined) {
 			callback(); //Some stuff call this without value doing shit with the rest
-		} else {
+		} 
+		/*else {
 			this.log("setTargetHeatingCoolingState from/to:", this.targetHeatingCoolingState, value);
 			
 			request.get({
@@ -131,7 +132,8 @@ Thermostat.prototype = {
 					this.log("Error getting state: %s", err);
 					callback(err);
 				}
-			}.bind(this));
+			}.bind(this));*/
+		callback();
 		}
 	},
 	getCurrentTemperature: function(callback) {
@@ -220,7 +222,7 @@ Thermostat.prototype = {
 	getTargetRelativeHumidity: function(callback) {
 		this.log("getTargetRelativeHumidity:", this.targetRelativeHumidity);
 		var error = null;
-		callback(error, this.targetRelativeHumidity);
+		callback(null, this.targetRelativeHumidity);
 	},
 	setTargetRelativeHumidity: function(value, callback) { // change function to set other options
 		this.log("start set aditional");
