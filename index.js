@@ -50,7 +50,7 @@ function Thermostat(log, config) {
 	//Characteristic.CurrentHeatingCoolingState.COOL = 2;
 	this.heatingCoolingState = Characteristic.CurrentHeatingCoolingState.OFF;
 	this.targetTemperature = 21;
-	this.targetRelativeHumidity = 5;
+	this.targetRelativeHumidity = 55;
 	this.heatingThresholdTemperature = 25;
 	this.coolingThresholdTemperature = 5;
 	// The value property of TargetHeatingCoolingState must be one of the following:
