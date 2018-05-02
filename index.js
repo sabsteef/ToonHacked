@@ -43,14 +43,14 @@ function Thermostat(log, config) {
 	//Characteristic.TemperatureDisplayUnits.FAHRENHEIT = 1;
 	this.temperatureDisplayUnits = Characteristic.TemperatureDisplayUnits.CELSIUS;
 	this.currentTemperature = 19;
-	this.currentRelativeHumidity = 0.70;
+	this.currentRelativeHumidity = 5;
 	// The value property of CurrentHeatingCoolingState must be one of the following:
 	//Characteristic.CurrentHeatingCoolingState.OFF = 0;
 	//Characteristic.CurrentHeatingCoolingState.HEAT = 1;
 	//Characteristic.CurrentHeatingCoolingState.COOL = 2;
 	this.heatingCoolingState = Characteristic.CurrentHeatingCoolingState.OFF;
 	this.targetTemperature = 21;
-	this.targetRelativeHumidity = 0.5;
+	this.targetRelativeHumidity = 5;
 	this.heatingThresholdTemperature = 25;
 	this.coolingThresholdTemperature = 5;
 	// The value property of TargetHeatingCoolingState must be one of the following:
@@ -211,6 +211,17 @@ Thermostat.prototype = {
 
 	// Optional
 	getCurrentRelativeHumidity: function(callback) {
+		this.log("getCurrentRelativeHumidity not implemented with API");
+		this.currentRelativeHumidity = this.targetRelativeHumidity;
+		var error = null;
+		callback(null, this.currentRelativeHumidity); // success
+		//callback(error);
+		
+		
+		
+		
+		
+		
 		this.log("getCurrentRelativeHumidity from:", this.apiroute+"/happ_thermstat?action=getThermostatInfo");
 		request.get({
 			url: this.apiroute+"/status",
