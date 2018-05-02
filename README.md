@@ -1,6 +1,6 @@
 # ToonHacked
 
-## control your rooted Toon Using HomeBridge
+### control your rooted Toon Using HomeBridge
 
 ## Info
 
@@ -23,7 +23,7 @@ This is not a script to root your Toon. if you want to root your Toon this is a 
 https://github.com/martenjacobs/ToonRooter
 
 heres a howto to install homebridge:
-https://github.com/nfarina/homebridge ( all the credits go here)
+https://github.com/nfarina/homebridge
 
 ##Version:
 
