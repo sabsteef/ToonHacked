@@ -6,7 +6,7 @@
             "apiroute": "http://yourToonIp",
             //optional
             "maxTemp": "26",
-            "minTemp": "15",
+            "minTemp": "10",
         }
 */
 
@@ -25,7 +25,7 @@ module.exports = function(homebridge){
 function Thermostat(log, config) {
 	this.log = log;
 	this.maxTemp = config.maxTemp || 26;
-	this.minTemp = config.minTemp || 15;
+	this.minTemp = config.minTemp || 10;
 	this.name = config.name;
 	this.apiroute = config.apiroute || "apiroute";
 	this.log(this.name, this.apiroute);
@@ -43,16 +43,16 @@ function Thermostat(log, config) {
 	//Characteristic.TemperatureDisplayUnits.FAHRENHEIT = 1;
 	this.temperatureDisplayUnits = Characteristic.TemperatureDisplayUnits.CELSIUS;
 	this.currentTemperature = 19;
-	this.currentRelativeHumidity = 5;
+	this.currentRelativeHumidity = 0;
 	// The value property of CurrentHeatingCoolingState must be one of the following:
 	//Characteristic.CurrentHeatingCoolingState.OFF = 0;
 	//Characteristic.CurrentHeatingCoolingState.HEAT = 1;
 	//Characteristic.CurrentHeatingCoolingState.COOL = 2;
 	this.heatingCoolingState = Characteristic.CurrentHeatingCoolingState.OFF;
 	this.targetTemperature = 21;
-	this.targetRelativeHumidity = 55;
-	this.heatingThresholdTemperature = 25;
-	this.coolingThresholdTemperature = 5;
+	this.targetRelativeHumidity = 0;
+	this.heatingThresholdTemperature = 22;
+	this.coolingThresholdTemperature = 16;
 	// The value property of TargetHeatingCoolingState must be one of the following:
 	//Characteristic.TargetHeatingCoolingState.OFF = 0;
 	//Characteristic.TargetHeatingCoolingState.HEAT = 1;
@@ -216,55 +216,17 @@ Thermostat.prototype = {
 		this.log("getCurrentRelativeHumidity not implemented with API");
 		this.currentRelativeHumidity = this.targetRelativeHumidity;
 		var error = null;
-		callback(null, this.currentRelativeHumidity); // success
-		//callback(error);
+		callback(error, this.currentRelativeHumidity);
 	},
 	getTargetRelativeHumidity: function(callback) {
-		this.log("getTargetRelativeHumidity:", this.targetRelativeHumidity);
+		this.log("getTargetRelativeHumidity not implemented with API");
 		var error = null;
-		callback(null, this.targetRelativeHumidity);
+		callback(error, this.targetRelativeHumidity);
 	},
-	setTargetRelativeHumidity: function(value, callback) { // change function to set other options
-		this.log("start set aditional");
-		if (value == 0 || value == 1) { // used for program on / off
-		    var URL = "/happ_thermstat?action=changeSchemeState&state=";
-		    }
-		else if (value == 10 || value == 11 || value == 12 || value == 13){  // Set program 0=Comfort 1=Thuis 2=Slapen 3=weg
-			  var URL = "/happ_thermstat?action=changeSchemeState&state=2&temperatureState=";
-			  if (value == 10){
-			      value = 0;
-			      }
-			  else if (value == 11 ){
-			      value = 1;
-			      }
-			  else if (value == 12 ){
-			      value = 2;
-			      }
-			  else if (value == 13 ){
-			      value = 3;
-			      }
-			 }
-		request.get({
-			url: this.apiroute+URL+value,
-			auth : this.auth
-		}, function(err, response, body) {
-			if (!err && response.statusCode == 200) {
-				this.log("response success");
-				callback(null); // success
-			} else {
-				this.log("Error getting state: %s", err);
-				callback(err);
-			}
-		}.bind(this));
-		
-		
-		
-		
-		//this.log("setTargetRelativeHumidity from/to :", this.targetRelativeHumidity, value);
-		//this.log("setTargetRelativeHumidity not implemented with API");
-		//this.targetRelativeHumidity = value;
-		//var error = null;
-		//callback(error);
+	setTargetRelativeHumidity: function(value, callback) { 
+		this.log("setTargetRelativeHumidity not implemented with API");
+		var error = null;
+		callback(error, this.targetRelativeHumidity);
 	},
 /*	getCoolingThresholdTemperature: function(callback) {
 		this.log("getCoolingThresholdTemperature: ", this.coolingThresholdTemperature);
@@ -280,9 +242,6 @@ Thermostat.prototype = {
 		this.log("getName :", this.name);
 		var error = null;
 		callback(error, this.name);
-	},
-	insertDecimal: function(num) {
-        return (num / 100).toFixed(2);
 	},
 
 	getServices: function() {
