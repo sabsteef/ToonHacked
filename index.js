@@ -216,38 +216,6 @@ Thermostat.prototype = {
 		var error = null;
 		callback(null, this.currentRelativeHumidity); // success
 		//callback(error);
-		
-		
-		
-		
-		
-		
-		this.log("getCurrentRelativeHumidity from:", this.apiroute+"/happ_thermstat?action=getThermostatInfo");
-		request.get({
-			url: this.apiroute+"/status",
-			auth : this.auth
-		}, function(err, response, body) {
-			if (!err && response.statusCode == 200) {
-				this.log("response success");
-				var json = JSON.parse(body); //{"state":"OFF","targetStateCode":5,"temperature":"18.10","humidity":"34.10"}
-				
-				if (json.currentRelativeHumidity != undefined)
-                                {
-                                  this.log("Humidity state is %s", json.currentRelativeHumidity);
-                                  this.currentRelativeHumidity = parseFloat(json.currentRelativeHumidity);
-                                }
-                                else
-                                {
-                                  this.log("Humidity %s", json.humidity);
-                                  this.currentRelativeHumidity = parseFloat(json.humidity);
-                                }
-
-				callback(null, this.currentRelativeHumidity); // success
-			} else {
-				this.log("Error getting state: %s", err);
-				callback(err);
-			}
-		}.bind(this));
 	},
 	getTargetRelativeHumidity: function(callback) {
 		this.log("getTargetRelativeHumidity:", this.targetRelativeHumidity);
