@@ -28,4 +28,7 @@ https://github.com/nfarina/homebridge
 ##Version:
 
 **0.8.2**
+- Updated Readme
+
+**0.8.1**
 - Fixed actual temp display.
